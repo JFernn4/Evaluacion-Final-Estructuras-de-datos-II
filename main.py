@@ -42,7 +42,7 @@ def generar_claves():
 
 def firmar_mensaje(mensaje):
 
-    with open("archivo_mensaje.bin","wb") as f:
+    with open("archivo_mensaje.txt","wb") as f:
         f.write(mensaje)
     with open("clave_privada.pem", "rb") as f:
         private_key = rsa.PrivateKey.load_pkcs1(f.read())
@@ -54,6 +54,26 @@ def firmar_mensaje(mensaje):
 
     with open("firma.bin", "wb") as f:
                 f.write(firma)
+    return firma
+
+def verificar_firma(self):
+    try:
+                with open("clave_publica.pem", "rb") as f:
+                    public_key = rsa.PublicKey.load_pkcs1(f.read())
+
+                with open("archivo_mensaje.txt", "rb") as f:
+                    mensaje = f.read()
+
+                with open("firma.bin", "rb") as f:
+                    firma = f.read()
+
+                rsa.verify(mensaje, firma, public_key)
+                return"La firma es válida. El mensaje es auténtico."
+
+    except rsa.VerificationError:
+                return"Firma inválida. El mensaje pudo haber sido alterado."
+
+
 
 
 def menu():
@@ -103,20 +123,33 @@ def menu():
             clave_publica, clave_privada = generar_claves()
             print(f"Clave publica: {clave_publica}")
             print(f"Clave privada{clave_privada}")
-            firmar_mensaje(mensaje)
+            firma = firmar_mensaje(mensaje)
 
             input("\nPresione 'Enter' para continuar.")
         elif opcion == "5":
             limpiar()
             print(f"Mensaje actual: {mensaje}\n")
+            print("\nENVIO\n")
+            print(f"Enviando mensaje: {rle_comprimido}...")
+            print(f"Enviando firma digital: {firma}...")
+            print(f"Enviando clave publica: {clave_publica}...")
+
             input("\nPresione 'Enter' para continuar.")
         elif opcion == "6":
             limpiar()
             print(f"Mensaje actual: {mensaje}\n")
+            print("\nVERIFICAR FIRMA\n")
+            verificar_firma()
             input("\nPresione'Enter' para continuar.")
         elif opcion == "7":
             limpiar()
             print(f"Mensaje actual: {mensaje}\n")
+            print("\nVERIFICAR FIRMA\n")
+            if fnv1_hash(mensaje) == hash:
+                 print("El mensaje no ha sido alterado,")
+            else:
+                print("El mensaje fue alterado.")
+            verificar_firma()
             input("\nPresione 'Enter' para continuar.")
         elif opcion == "8":
             limpiar()
