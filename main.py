@@ -149,7 +149,6 @@ def menu():
                  print("El mensaje no ha sido alterado,")
             else:
                 print("El mensaje fue alterado.")
-            verificar_firma()
             input("\nPresione 'Enter' para continuar.")
         elif opcion == "8":
             limpiar()
